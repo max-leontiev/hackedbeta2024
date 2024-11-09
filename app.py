@@ -1,13 +1,16 @@
 # save this as app.py
-from flask import Flask, render_template
-
+from flask import Flask, request, render_template
+from markupsafe import escape
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def hello():
     return render_template("index.html")
 
-
-
-def calctest():
-    return "test";
+@app.route('/result', methods=['POST'])
+def read_form():
+    # Get the form data as Python ImmutableDict datatype
+    data = request.form
+    
+    ## Return the extracted information (escape it to be safe)
+    return render_template("index.html", calculation=escape(data['calculation']))
