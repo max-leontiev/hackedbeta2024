@@ -4,15 +4,17 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Calculator</title>
 
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/reset.css') }}">
     <link rel="stylesheet" href="{{ url_for('static',filename='styles/index.css') }}">
   </head>
   <body>
+    {% for calculation in calculation_history %}
+      {{calculation}}<br>
+    {% endfor %}
     <form action="{{ url_for('read_form') }}" method="post"> 
-      <input name="calculation" type="text" id="email"> 
-    </form> 
-    {{calculation}}
+      <input name="calculation" type="text" id="calculation"> 
+    </form>
   </body>
 </html>
