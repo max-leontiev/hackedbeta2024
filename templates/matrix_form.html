@@ -1,24 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Matrix Input</title>
-</head>
-<body>
-    <h2>Enter Matrix Elements for {{ n }}x{{ m }} Matrix</h2>
-    <form method="POST" action="/matrix">
-        <input type="hidden" name="n" value="{{ n }}">
-        <input type="hidden" name="m" value="{{ m }}">
-        {% for i in range(n) %}
-            <div>
-                {% for j in range(m) %}
-                    <label for="element_{{ i }}_{{ j }}">Element ({{ i+1 }},{{ j+1 }}):</label>
-                    <input type="number" id="element_{{ i }}_{{ j }}" name="element_{{ i }}_{{ j }}" required>
-                {% endfor %}
-            </div>
-            <br>
-        {% endfor %}
-        <button type="submit">Create Matrix</button>
-    </form>
-</body>
-</html>
+{% extends "index.html" %}
+{% block mat %}
+<form method="POST" action="/matrix/{{ matrix.id }}">
+  <div class="matrix">
+    {% for row in range(matrix.rows) -%}
+      <div class="matrix-row" style="grid-template-columns: repeat({{ matrix.columns }}, 40px)">
+        {% for column in range(matrix.columns) -%}
+          <div class="matrix-element">
+            <input title="{{ row+1 }}, {{ column+1 }}" class="matrix-element-input" type="text" id="element_{{ row }}_{{ column }}" name="element_{{ row }}_{{ column }}" required>
+          </div>
+        {%- endfor %}
+      </div>
+    {%- endfor %}
+  </div>
+  <button type="submit">Submit</button>
+</form>
+{% endblock %}

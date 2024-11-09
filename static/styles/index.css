@@ -1,3 +1,44 @@
 body {
   font-family: sans-serif;
 }
+
+.matrix {
+  width: fit-content;
+  display: grid;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.matrix:first-child {
+  border-top: 1px solid black;
+}
+.matrix:last-child {
+  border-bottom: 1px solid black;
+}
+
+.matrix-row {
+  display: grid;
+  grid-column-gap: 0px;
+}
+
+.matrix-element {
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  padding-left: 2px;
+  box-sizing: border-box;
+}
+
+.matrix-element:focus-within {
+  border: 1px solid blue;
+}
+
+.matrix-element-input {
+  width: 35px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.matrix-element-input:focus {
+  border: none;
+  outline: none;
+}

@@ -1,49 +1,37 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-import numpy as np
-import re
+from flask import Flask, render_template, request
+from matrix import Matrix
 
 app = Flask(__name__)
 app.secret_key = 'secretkey'  # Necessary for flashing messages
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET"])
 def index():
-    if request.method == 'POST':
-        # Get the expression entered by the user
-        expression = request.form['expression']
-        
-        # Parse matrices in the form of [[1,2];[3,4]] in the expression
-        matrix_pattern = r'\[\[(.*?)\]\]'
-        matrix_count = 0
-        matrix_vars = {}
+    return render_template("index.html")
 
-        def replace_matrix(match):
-            nonlocal matrix_count
-            # Extract and format matrix from the match, e.g., "1,2;3,4" -> [[1, 2], [3, 4]]
-            matrix_content = match.group(1)
-            rows = matrix_content.split(';')
-            matrix = [list(map(int, re.findall(r'-?\d+', row))) for row in rows]  # Use regex to find all integers
-            matrix_var = f'matrix_{matrix_count}'
-            matrix_vars[matrix_var] = np.array(matrix)
-            matrix_count += 1
-            return matrix_var
+@app.route("/create_matrix", methods=["POST"])
+def create_matrix():
+    try:
+        mat = Matrix(int(request.form["rows"]), int(request.form["columns"]))
+    except ValueError:
+        return "Please enter valid integers for rows and columns.", 400
+    return mat.as_form()
 
-        # Replace all matrix patterns in the expression with variable names
-        parsed_expression = re.sub(matrix_pattern, replace_matrix, expression)
+# Route to handle matrix input and display result
+@app.route("/matrix/<int:matrix_id>", methods=["POST"])
+def matrix(matrix_id: int):
+    mat = Matrix.all_matrices[matrix_id]
+    values = []
+    for row_num in range(mat.rows):
+        row = []
+        for col_num in range(mat.columns):
+            element_name = f"element_{row_num}_{col_num}"
+            element = int(request.form[element_name])
+            row.append(element)
+        values.append(row)
+    Matrix.all_matrices[matrix_id].update_internal_np_array(values)
 
-        # Try to evaluate the expression
-        try:
-            # Replace matrix_var names in the parsed expression with actual matrix references
-            for var, matrix in matrix_vars.items():
-                exec(f"{var} = matrix_vars['{var}']")
+    return Matrix.all_matrices[matrix_id].as_form()
 
-            result_matrix = eval(parsed_expression)
-        except Exception as e:
-            flash(f"Error: {str(e)}", 'error')
-            return render_template('matrix_calculator.html', expression=expression)
-        
-        return render_template('matrix_calculator.html', expression=expression, result_matrix=result_matrix.tolist())
 
-    return render_template('matrix_calculator.html')
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
