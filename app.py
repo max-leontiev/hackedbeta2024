@@ -10,9 +10,15 @@ def index():
 @app.route("/create_matrix", methods=["POST"])
 def create_matrix():
     try:
-        mat = Matrix(int(request.form["rows"]), int(request.form["columns"]))
+        rows = int(request.form["rows"])
+        columns = int(request.form["columns"])
     except ValueError:
         return "Please enter valid integers for rows and columns.", 400
+    
+    if rows < 0 or rows > 20 or columns < 0 or columns > 20:
+        return "Please enter valid integers in the range [1, 20] for rows and columns.", 400
+    
+    mat = Matrix(int(request.form["rows"]), int(request.form["columns"]))
     return mat.as_form()
 
 # Route to handle matrix input and display result
