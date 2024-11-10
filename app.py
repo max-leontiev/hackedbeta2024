@@ -19,11 +19,13 @@ def create_matrix():
         return "Please enter valid integers in the range [1, 20] for rows and columns.", 400
         
     Matrix(rows, columns)
-    return redirect('/')
+    return render_template("index.html", calculation=Matrix.calculation)
 
 # Route to handle matrix input and display result
 @app.route("/matrix/<int:matrix_ind>", methods=["POST"])
 def matrix(matrix_ind: int):
+    if matrix_ind > len(Matrix.calculation) - 1:
+        return render_template("index.html", calculation=Matrix.calculation)
     mat = Matrix.calculation[matrix_ind]
     values = []
     for row_num in range(mat.rows):
@@ -33,11 +35,15 @@ def matrix(matrix_ind: int):
             try:
                 element = float(request.form[element_name])
             except ValueError:
-                return "Please enter valid floats for matrix entries.", 400
+                # default to old element if input is invalid and previous input exists
+                if mat.np_array is not None:
+                    element = Matrix.calculation[matrix_ind].np_array[row_num][col_num]
+                else: # otherwise set it to 0
+                    element = 0
             row.append(element)
         values.append(row)
-    Matrix.calculation[matrix_ind].update_internal_np_array(values)
-    return redirect('/')
+    mat.update_internal_np_array(values)
+    return render_template("index.html", calculation=Matrix.calculation)
 
 
 if __name__ == "__main__":

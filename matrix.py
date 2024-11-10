@@ -16,6 +16,7 @@ class Matrix:
             return str(self.np_array[row][col])
         else:
             return ''
+    
     def as_form(self):
         return render_template("matrix_form.html", matrix=self)
 

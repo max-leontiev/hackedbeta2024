@@ -6,12 +6,12 @@
           {% for column in range(matrix.columns) -%}
             <div class="matrix-element">
               <input title="{{ row+1 }}, {{ column+1 }}" class="matrix-element-input" type="number" step="any" id="element_{{ row }}_{{ column }}" 
-              name="element_{{ row }}_{{ column }}" value="{{matrix.get_value_as_string(row, column)}}">
+              name="element_{{ row }}_{{ column }}" value="{{matrix.get_value_as_string(row, column)}}"
+              onchange="this.form.submit()">
             </div>
           {%- endfor %}
         </div>
       {%- endfor %}
     </div>
-    <button type="submit">Submit</button>
   </form>
 </div>
