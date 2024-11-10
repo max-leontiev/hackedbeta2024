@@ -16,10 +16,6 @@ class UOperator:
         A = matrixA.np_array;   
         return np.linalg.inv(A);
 
-
-    
-
-
 class BOperator:
     def __init__(self,matrix_a,matrix_b):
         self.matrix_a = matrix_a;
@@ -49,13 +45,9 @@ class BOperator:
         B = matrix_b.np_array()
         result = A+B
         return result
-
-
-
+    
 def determinant(matrix):
-    A = matrix.np_array;
-    return 0;
+    A = matrix.np_array
+    return 0
 def inverse(matrix):  
-    return 0;
-
-
+    return 0
