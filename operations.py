@@ -8,7 +8,6 @@ class UOperator:
     def __init__(self,matrix):
         self.matrix = matrix;
     
-
     def determinant(matrixA):
         A = matrixA.np_array;
         return np.linalg.det(A);
@@ -16,6 +15,8 @@ class UOperator:
     def inverse(matrixA):
         A = matrixA.np_array;   
         return np.linalg.inv(A);
+
+
     
 
 
