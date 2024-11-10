@@ -2,19 +2,23 @@ from flask import render_template
 import numpy as np
 
 class Matrix:
-    all_matrices = {}
-    matrix_count = 0
+    calculation = []
 
     def __init__(self, rows: int, columns: int):
         self.rows = rows
         self.columns = columns
-        Matrix.matrix_count += 1
-        self.id = Matrix.matrix_count
-        Matrix.all_matrices[self.id] = self
+        self.ind = len(Matrix.calculation)
+        self.np_array = None
+        Matrix.calculation.append(self)
 
+    def get_value_as_string(self, row, col):
+        if self.np_array is not None:
+            return str(self.np_array[row][col])
+        else:
+            return ''
     def as_form(self):
         return render_template("matrix_form.html", matrix=self)
 
     def update_internal_np_array(self, values_list):
         self.np_array = np.array(values_list)
-        print(Matrix.all_matrices[self.id].np_array)
+        print(self.np_array)
