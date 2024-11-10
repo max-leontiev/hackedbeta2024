@@ -1,25 +1,23 @@
 import numpy as np;
+from flask import render_template
 from matrix import Matrix;
 
-
-
-
 class UOperator:
-    def __init__(self,matrix):
-        self.matrix = matrix;
+    def __init__(self, matrix: Matrix):
+        self.matrix = matrix
     
-    def determinant(matrixA):
-        A = matrixA.np_array;
-        return np.linalg.det(A);
+    def determinant(matrixA: Matrix):
+        A = matrixA.np_array
+        return np.linalg.det(A)
 
-    def inverse(matrixA):
+    def inverse(matrixA: Matrix):
         A = matrixA.np_array;   
-        return np.linalg.inv(A);
+        return np.linalg.inv(A)
 
 class BOperator:
     def __init__(self,matrix_a,matrix_b):
-        self.matrix_a = matrix_a;
-        self.matrix_b = matrix_b;
+        self.matrix_a = matrix_a
+        self.matrix_b = matrix_b
 
 
     def directSum(self, matrix_a, matrix_b): #pass in numpy arrays
@@ -51,3 +49,20 @@ def determinant(matrix):
     return 0
 def inverse(matrix):  
     return 0
+
+class Multiply:
+    name = 'multiply'
+    string = '×'
+
+    def __init__(self):
+        self.ind = len(Matrix.calculation)
+    
+    def compute(matrix_a, matrix_b):
+        A = matrix_a.np_array()
+        B = matrix_b.np_array()
+        result = np.matmul(A,B)
+        return result
+    
+    def as_form(self):
+        return render_template("operation.html", operation=self)
+

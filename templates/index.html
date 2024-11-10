@@ -16,6 +16,9 @@
     />
   </head>
   <body>
+    <form>
+      <button formmethod="POST" formaction="/create_operation/multiplication">×</button>
+    </form>
     {% include 'create_matrix_form.html' %}
     <div id="calculation">
       {% for item in calculation -%} {{ item.as_form()|safe }} {%- endfor %}

@@ -3,7 +3,7 @@ import numpy as np
 
 class Matrix:
     calculation = []
-
+    
     def __init__(self, rows: int, columns: int):
         self.rows = rows
         self.columns = columns

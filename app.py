@@ -1,7 +1,14 @@
 from flask import Flask, render_template, request, redirect
 from matrix import Matrix
+from operations import Multiply
 
 app = Flask(__name__)
+
+operations = {
+    '×': Multiply,
+    '*': Multiply,
+    'multiplication': Multiply
+}
 
 @app.route("/", methods=["GET"])
 def index():
@@ -19,6 +26,24 @@ def create_matrix():
         return "Please enter valid integers in the range [1, 20] for rows and columns.", 400
         
     Matrix(rows, columns)
+    return render_template("index.html", calculation=Matrix.calculation)
+
+
+@app.route("/create_operation/<operation_name>", methods=["POST"])
+def create_operation(operation_name):
+    if isinstance(Matrix.calculation[-1], Multiply):
+        return render_template("index.html", calculation=Matrix.calculation)
+    Matrix.calculation.append(operations[operation_name]())
+    return render_template("index.html", calculation=Matrix.calculation)
+
+@app.route("/operation/<int:operation_ind>", methods=["POST"])
+def operation(operation_ind):
+    if operation_ind > len(Matrix.calculation) - 1:
+        return render_template("index.html", calculation=Matrix.calculation)
+    operation_type = request.form['operation_type']
+    if operation_type not in operations:
+        return render_template("index.html", calculation=Matrix.calculation)
+    Matrix.calculation[operation_ind] = operations[operation_type]()
     return render_template("index.html", calculation=Matrix.calculation)
 
 # Route to handle matrix input and display result
@@ -44,7 +69,6 @@ def matrix(matrix_ind: int):
         values.append(row)
     mat.update_internal_np_array(values)
     return render_template("index.html", calculation=Matrix.calculation)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
