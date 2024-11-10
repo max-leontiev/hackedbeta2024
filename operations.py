@@ -10,9 +10,7 @@ class BOperator:
         self.matrix_a = matrix_a;
         self.matrix_b = matrix_b;
 
-class directSum:
-    def __init__(self,matrix_a,matrix_b):
-        super().__init__(matrix_a,matrix_b);
+    
 
 
 
