@@ -15,10 +15,10 @@ def create_matrix():
     except ValueError:
         return "Please enter valid integers for rows and columns.", 400
     
-    if rows < 0 or rows > 20 or columns < 0 or columns > 20:
+    if rows <= 0 or rows > 20 or columns <= 0 or columns > 20:
         return "Please enter valid integers in the range [1, 20] for rows and columns.", 400
-    
-    mat = Matrix(int(request.form["rows"]), int(request.form["columns"]))
+        
+    mat = Matrix(rows, columns)
     return mat.as_form()
 
 # Route to handle matrix input and display result
