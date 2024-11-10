@@ -2,48 +2,176 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matrix Calculator</title>
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
         table, td {
             border: 1px solid black;
             padding: 5px;
             text-align: center;
         }
-        .error {
-            color: red;
+        .preview {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .matrix-inline {
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .operator-inline {
+            display: inline-block;
+            margin: 0 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 1em;
+            cursor: pointer;
         }
     </style>
+    <script>
+        async function calculateExpression() {
+            const expression = document.getElementById('expression').value;
+
+            // Send data to Flask backend
+            const response = await fetch('/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ expression })
+            });
+
+            const result = await response.json();
+            if (result.error) {
+                displayError(result.error);
+            } else {
+                displayResult(result.result_matrix);
+            }
+        }
+
+        function displayResult(resultMatrix) {
+            const resultContainer = document.getElementById('result');
+            resultContainer.innerHTML = '<h3>Result Matrix:</h3>';
+            const table = document.createElement('table');
+            resultMatrix.forEach(row => {
+                const tr = document.createElement('tr');
+                row.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.textContent = cell;
+                    tr.appendChild(td);
+                });
+                table.appendChild(tr);
+            });
+            resultContainer.appendChild(table);
+        }
+
+        function displayError(errorMessage) {
+            const resultContainer = document.getElementById('result');
+            resultContainer.innerHTML = `<h3>Error: ${errorMessage}</h3>`;
+        }
+
+        // Function to show live preview with formatted matrix and operators inline
+        function updatePreview() {
+            const expression = document.getElementById('expression').value;
+            const previewContainer = document.getElementById('preview');
+            previewContainer.innerHTML = "";  // Clear previous preview content
+
+            const matrixPattern = /\[\[(.*?)\]\]/g;
+            let lastIndex = 0;
+            let match;
+
+            // Process each matrix and operator in the expression
+            while ((match = matrixPattern.exec(expression)) !== null) {
+                // Add any operator or text before the matrix
+                if (match.index > lastIndex) {
+                    const operatorText = expression.slice(lastIndex, match.index).trim();
+                    if (operatorText) {
+                        const operatorElement = document.createElement("span");
+                        operatorElement.className = "operator-inline";
+                        operatorElement.textContent = operatorText;
+                        previewContainer.appendChild(operatorElement);
+                    }
+                }
+
+                // Process the matrix and create HTML table
+                const matrixContent = match[1];
+                const rows = matrixContent.split(";");
+                const table = document.createElement("table");
+                table.className = "matrix-inline";
+                rows.forEach(row => {
+                    const tr = document.createElement("tr");
+                    row.split(",").forEach(cell => {
+                        const td = document.createElement("td");
+                        td.textContent = cell.trim();
+                        tr.appendChild(td);
+                    });
+                    table.appendChild(tr);
+                });
+                previewContainer.appendChild(table);
+
+                lastIndex = match.index + match[0].length;
+            }
+
+            // Add any remaining operators or text after the last matrix
+            if (lastIndex < expression.length) {
+                const remainingText = expression.slice(lastIndex).trim();
+                if (remainingText) {
+                    const operatorElement = document.createElement("span");
+                    operatorElement.className = "operator-inline";
+                    operatorElement.textContent = remainingText;
+                    previewContainer.appendChild(operatorElement);
+                }
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>Matrix Calculator</h1>
+    <div class="container">
+        <h1>Matrix Calculator</h1>
+        
+        <div>
+            <h3>Enter Expression</h3>
+            <p>Use format [[1,2];[3,4]] for matrices and combine them with +, -, *</p>
+            <input 
+                type="text" 
+                id="expression" 
+                placeholder="e.g., [[1,2];[3,4]] + [[4,5];[6,7]] * [[1,0];[0,1]]" 
+                oninput="updatePreview()"  <!-- Trigger live preview update on input change -->
+            >
+            <button onclick="calculateExpression()">Calculate</button>
+        </div>
 
-    <!-- Form to enter matrix expression -->
-    <form method="POST">
-        <label for="expression">Enter Expression (e.g., [[1,2];[3,4]] + [[4,5];[6,7]])</label><br>
-        <input type="text" id="expression" name="expression" value="{{ expression or '' }}" style="width: 500px;"><br><br>
-        <button type="submit">Calculate</button>
-    </form>
+        <div class="preview">
+            <h3>Live Preview:</h3>
+            <div id="preview"></div>  <!-- Display area for real-time formatted input preview -->
+        </div>
 
-    {% if result_matrix %}
-        <h2>Result Matrix:</h2>
-        <table>
-            {% for row in result_matrix %}
-                <tr>
-                    {% for cell in row %}
-                        <td>{{ cell }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </table>
-    {% endif %}
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="error">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+        <div id="result"></div>
+    </div>
 </body>
 </html>
