@@ -17,11 +17,16 @@
   </head>
   <body>
     <form>
-      <button formmethod="POST" formaction="/create_operation/multiplication">×</button>
+      <button formmethod="POST" formaction="/create_binary_operator/multiplication">
+        ×
+      </button>
     </form>
     {% include 'create_matrix_form.html' %}
     <div id="calculation">
       {% for item in calculation -%} {{ item.as_form()|safe }} {%- endfor %}
+    </div>
+    <div id="result">
+      {% for item in result -%} {{ item.as_static_markup()|safe }} {%- endfor %}
     </div>
   </body>
 </html>

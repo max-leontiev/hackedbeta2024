@@ -1,0 +1,14 @@
+<div class="binary-operation-container">
+  <form method="POST" action="/binary_operator/{{ operation.ind }}">
+    <div class="binary-operation">
+        {% if disabled %}
+        <input disabled title="{{ operation.name() }}" class="binary-operation-input" type="text"
+              name="operation_symbol" value="{{ operation.symbols()[0] }}" maxlength="1">
+        {% else %}
+        <input title="{{ operation.name() }}" class="binary-operation-input" type="text"
+              name="operation_symbol" value="{{ operation.symbols()[0] }}" maxlength="1"
+              onchange="this.form.submit()">
+        {% endif %}
+    </div>
+  </form>
+</div>

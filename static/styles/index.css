@@ -47,17 +47,19 @@ body {
   margin: 0;
 }
 
-.operation-container {
+.binary-operation-container {
   display: flex;
   align-items: center;
   margin-left: 5px;
   margin-right: 5px;
 }
-.operation-input {
+
+.binary-operation-input {
   width: 10px;
   border: none;
   padding: 0;
   margin: 0;
+  text-align: center;
 }
 
 .matrix-element-input:focus {
@@ -67,13 +69,16 @@ body {
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button.matrix-element-input,
-input::-webkit-inner-spin-button.matrix-element-input  {
-  -webkit-appearance: none;
+input::-webkit-inner-spin-button.matrix-element-input,
+input::-webkit-outer-spin-button.binary-operation-input,
+input::-webkit-inner-spin-button.binary-operation-input  {
+  -webkit-appearance: textfield;
   margin: 0;
 }
 
 /* Firefox */
-input[type=number].matrix-element-input  {
+input[type=number].matrix-element-input,
+input[type=number].binary-operation-input {
   -moz-appearance: textfield;
   appearance: textfield;
 }
