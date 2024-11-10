@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect
 from matrix import Matrix
 
 app = Flask(__name__)
+app.secret_key = 'secretkey'  # Necessary for flashing messages
 
 @app.route("/", methods=["GET"])
 def index():
