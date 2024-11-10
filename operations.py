@@ -1,9 +1,24 @@
 import numpy as np;
 from matrix import Matrix;
 
+
+
+
 class UOperator:
     def __init__(self,matrix):
         self.matrix = matrix;
+    
+    def determinant(matrixA):
+        A = matrixA.np_array;
+        return np.linalg.det(A);
+
+    def inverse(matrixA):
+        A = matrixA.np_array;   
+        return np.linalg.inv(A);
+
+
+    
+
 
 class BOperator:
     def __init__(self,matrix_a,matrix_b):
